@@ -1,13 +1,12 @@
-const supabase = require("../connection/db");
+const homeActions = require("../actions/homeActions");
 const validateHome = require("../helpers/validateHome");
-
 const sendErrorResponse = require("../utils/sendErrorResponse");
 const errorMessages = require("../utils/errorMessages");
 
 module.exports = {
   async getHomeDetails(req, res) {
     try {
-      const { data, error } = await supabase.from("home_details").select("*");
+      const { data, error } = await homeActions.getHomeDetails();
       if (error)
         return sendErrorResponse(res, errorMessages.internalServerError);
       res.send(200, data);
@@ -20,10 +19,7 @@ module.exports = {
     let { id } = req.params;
 
     try {
-      const { data, error } = await supabase
-        .from("home_details")
-        .select("*")
-        .eq("id", id);
+      const { data, error } = await homeActions.getHomeById(id);
 
       if (error)
         return sendErrorResponse(res, errorMessages.internalServerError);
@@ -41,7 +37,6 @@ module.exports = {
 
   async createHomeDetails(req, res) {
     const videoBgHomePath = req.file.path;
-
     const { urlTrailerHome, episode, act } = req.body;
 
     const isValidationSuccess = validateHome(req.body, res);
@@ -49,18 +44,17 @@ module.exports = {
     if (!isValidationSuccess || !videoBgHomePath) return;
 
     try {
-      const { data, error } = await supabase.from("home_details").insert([
+      const { data, error } = await homeActions.createHomeDetails(
+        videoBgHomePath,
         {
-          video_background_home: videoBgHomePath,
+          urlTrailerHome,
           episode,
-          url_trailer_home: urlTrailerHome,
           act,
-        },
-      ]);
+        }
+      );
 
-      if (error) {
+      if (error)
         return sendErrorResponse(res, errorMessages.internalServerError);
-      }
 
       const newHomeDetails = data && data.length > 0 ? data[0] : null;
 
@@ -74,10 +68,7 @@ module.exports = {
     let { id } = req.params;
 
     try {
-      const { error } = await supabase
-        .from("home_details")
-        .delete()
-        .eq("id", id);
+      const { error } = await homeActions.deleteHomeDetails(id);
 
       if (error)
         return sendErrorResponse(res, errorMessages.internalServerError);
@@ -90,9 +81,7 @@ module.exports = {
 
   async updateHomeDetails(req, res) {
     let { id } = req.params;
-
     const videoBgHomePath = req.file.path;
-
     const { urlTrailerHome, episode, act } = req.body;
 
     const isValidationSuccess = validateHome(req.body, res);
@@ -100,15 +89,15 @@ module.exports = {
     if (!isValidationSuccess || !videoBgHomePath) return;
 
     try {
-      const { data, error } = await supabase
-        .from("home_details")
-        .update({
-          video_background_home: videoBgHomePath,
+      const { data, error } = await homeActions.updateHomeDetails(
+        id,
+        videoBgHomePath,
+        {
+          urlTrailerHome,
           episode,
-          url_trailer_home: urlTrailerHome,
           act,
-        })
-        .eq("id", id);
+        }
+      );
 
       if (error)
         return sendErrorResponse(res, errorMessages.internalServerError);
