@@ -2,6 +2,7 @@ const homeActions = require("../actions/homeActions");
 const validateHome = require("../helpers/validateHome");
 const sendErrorResponse = require("../utils/sendErrorResponse");
 const errorMessages = require("../utils/errorMessages");
+const fs = require("fs");
 
 module.exports = {
   async getHomeDetails(req, res) {
@@ -44,14 +45,11 @@ module.exports = {
     if (!isValidationSuccess || !videoBgHomePath) return;
 
     try {
-      const { data, error } = await homeActions.createHomeDetails(
-        videoBgHomePath,
-        {
-          urlTrailerHome,
-          episode,
-          act,
-        }
-      );
+      const { error } = await homeActions.createHomeDetails(videoBgHomePath, {
+        urlTrailerHome,
+        episode,
+        act,
+      });
 
       if (error)
         return sendErrorResponse(res, errorMessages.internalServerError);

@@ -1,5 +1,5 @@
 const supabase = require("../connection/db");
-const validateHome = require("../helpers/validateHome");
+const fs = require("fs");
 
 async function getHomeDetails() {
   try {
@@ -45,6 +45,23 @@ async function createHomeDetails(
 
 async function deleteHomeDetails(id) {
   try {
+    const { data: homeData, error: homeError } = await supabase
+      .from("home_details")
+      .select("video_background_home")
+      .eq("id", id);
+
+    if (homeError) {
+      throw homeError;
+    }
+
+    const videoBgHomePath =
+      homeData && homeData.length > 0
+        ? homeData[0].video_background_home
+        : null;
+    if (videoBgHomePath) {
+      fs.unlinkSync(videoBgHomePath);
+    }
+
     const { error } = await supabase.from("home_details").delete().eq("id", id);
     return { error };
   } catch (error) {
