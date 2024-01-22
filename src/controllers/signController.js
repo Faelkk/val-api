@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const supabase = require("../connection/db");
-require("dotenv").config();
+const env = require("../config/config");
 
 module.exports = {
   async login(req, res) {
@@ -18,6 +18,7 @@ module.exports = {
         .eq("email", email);
 
       if (error) {
+        console.log(error);
         return res.send(500, { error: "Internal Server Error" });
       }
 
@@ -29,7 +30,7 @@ module.exports = {
 
       const accessToken = jwt.sign(
         { userId: user.id, email: user.email },
-        process.env.JWT_SECRET_KEY,
+        env.jwtSecret,
         { expiresIn: "7d" }
       );
 
@@ -82,7 +83,7 @@ module.exports = {
 
       const accessToken = jwt.sign(
         { userId: newUser[0].id, email: newUser[0].email },
-        process.env.JWT_SECRET_KEY,
+        env.jwtSecret,
         { expiresIn: "7d" }
       );
 

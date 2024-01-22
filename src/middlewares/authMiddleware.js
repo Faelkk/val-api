@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
+const env = require("../config/config");
 
 module.exports = (req, res, next) => {
   const publicRoutes = ["/signin", "/signup"];
@@ -26,7 +26,7 @@ function verifyToken(req) {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const decoded = jwt.verify(token, env.jwtSecret);
     req.userId = decoded.sub;
     return true;
   } catch (err) {

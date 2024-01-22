@@ -1,4 +1,3 @@
-let abilitiesVideo = require("../../mocks/abilitiesVideo");
 const validateAbilities = require("../helpers/validateAbilities");
 const supabase = require("../connection/db");
 
