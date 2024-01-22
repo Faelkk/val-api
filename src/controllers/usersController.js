@@ -1,4 +1,4 @@
-const userActions = require("./userActions");
+const userActions = require("../actions/usersAction");
 const sendErrorResponse = require("../utils/sendErrorResponse");
 const errorMessages = require("../utils/errorMessages");
 

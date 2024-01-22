@@ -56,9 +56,7 @@ module.exports = {
       if (error)
         return sendErrorResponse(res, errorMessages.internalServerError);
 
-      const newHomeDetails = data && data.length > 0 ? data[0] : null;
-
-      res.send(200, { newHomeDetails });
+      res.send(200, { created: true });
     } catch (error) {
       sendErrorResponse(res, errorMessages.internalServerError);
     }
