@@ -1,15 +1,14 @@
-const validateAbilities = require("../helpers/validateAbilities");
-const supabase = require("../connection/db");
-
+const agentActions = require("../actions/agentsAction");
 const sendErrorResponse = require("../utils/sendErrorResponse");
 const errorMessages = require("../utils/errorMessages");
+const validateAbilities = require("../helpers/validateAbilities");
 
 module.exports = {
   async listAbilities(req, res) {
     const { order } = req.query;
 
     try {
-      const { data, error } = await supabase.from("agents").select("*");
+      const { data, error } = await agentActions.getAllAgents();
 
       if (error)
         return sendErrorResponse(res, errorMessages.internalServerError);
@@ -27,11 +26,7 @@ module.exports = {
     let { id } = req.params;
 
     try {
-      const { data, error } = await supabase
-        .from("agents")
-        .select("*")
-        .eq("id", id)
-        .single();
+      const { data, error } = await agentActions.getAgentById(id);
 
       if (error)
         return sendErrorResponse(res, errorMessages.internalServerError);
@@ -62,10 +57,7 @@ module.exports = {
     }
 
     try {
-      const { error } = await supabase
-        .from("agents")
-        .insert([{ name, abilities }])
-        .single();
+      const { error } = await agentActions.createAgent(name, abilities);
 
       if (error) sendErrorResponse(res, errorMessages.internalServerError);
 
@@ -79,7 +71,7 @@ module.exports = {
     let { id } = req.params;
 
     try {
-      const { error } = await supabase.from("agents").delete().eq("id", id);
+      const { error } = await agentActions.deleteAgentById(id);
 
       if (error)
         return sendErrorResponse(res, errorMessages.internalServerError);
@@ -100,15 +92,12 @@ module.exports = {
       return sendErrorResponse(res, errorMessages.invalidProperties);
     }
 
-    const isValidationSuccess = validateAbilities(abilities, res);
+    const isValidationSuccess = abilities.validateAbilities(abilities, res);
 
     if (!isValidationSuccess) return;
 
     try {
-      const { error } = await supabase
-        .from("agents")
-        .update({ name, abilities })
-        .eq("id", id);
+      const { error } = await agentActions.updateAgentById(id, name, abilities);
 
       if (error)
         return sendErrorResponse(res, errorMessages.internalServerError);
