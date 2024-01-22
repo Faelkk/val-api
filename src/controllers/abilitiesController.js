@@ -1,6 +1,9 @@
 const validateAbilities = require("../helpers/validateAbilities");
 const supabase = require("../connection/db");
 
+const sendErrorResponse = require("../utils/sendErrorResponse");
+const errorMessages = require("../utils/errorMessages");
+
 module.exports = {
   async listAbilities(req, res) {
     const { order } = req.query;
@@ -8,14 +11,15 @@ module.exports = {
     try {
       const { data, error } = await supabase.from("agents").select("*");
 
-      if (error) return res.send(500, { error: "Internal Server Error" });
+      if (error)
+        return sendErrorResponse(res, errorMessages.internalServerError);
 
       if (!order || (order !== "asc" && order !== "desc"))
         data.sort((a, b) => a.name.localeCompare(b.name));
 
       res.send(200, data);
     } catch (error) {
-      res.send(500, { error: "Internal Server Error" });
+      sendErrorResponse(res, errorMessages.internalServerError);
     }
   },
 
@@ -29,16 +33,14 @@ module.exports = {
         .eq("id", id)
         .single();
 
-      if (error) return res.send(500, { error: "Internal Server Error" });
+      if (error)
+        return sendErrorResponse(res, errorMessages.internalServerError);
 
-      if (!data)
-        return res.send(404, {
-          error: `Not found ability with id: ${id}`,
-        });
+      if (!data) return sendErrorResponse(res, errorMessages.notFound(id));
 
       res.send(200, { abilityAgent: data });
     } catch (error) {
-      res.send(500, { error: "Internal Server Error" });
+      sendErrorResponse(res, errorMessages.internalServerError);
     }
   },
 
@@ -50,7 +52,7 @@ module.exports = {
     }
 
     if (Object.keys(rest).length > 0) {
-      return res.send(400, { error: "Invalid properties in req.body" });
+      return sendErrorResponse(res, errorMessages.invalidProperties);
     }
 
     const isValidationSuccess = validateAbilities(abilities, res);
@@ -65,14 +67,11 @@ module.exports = {
         .insert([{ name, abilities }])
         .single();
 
-      if (error) {
-        res.send(400, { error: "Internal Server Error" });
-      }
+      if (error) sendErrorResponse(res, errorMessages.internalServerError);
 
-      res.send(200);
+      res.send(200, { created: true });
     } catch (error) {
-      console.log(error);
-      res.send(500, { error: "Internal Server Error" });
+      sendErrorResponse(res, errorMessages.internalServerError);
     }
   },
 
@@ -82,11 +81,12 @@ module.exports = {
     try {
       const { error } = await supabase.from("agents").delete().eq("id", id);
 
-      if (error) return res.send(500, { error: "Internal Server Error" });
+      if (error)
+        return sendErrorResponse(res, errorMessages.internalServerError);
 
       res.send(200, { deleted: true });
     } catch (error) {
-      res.send(500, { error: "Internal Server Error" });
+      sendErrorResponse(res, errorMessages.internalServerError);
     }
   },
 
@@ -94,10 +94,10 @@ module.exports = {
     let { id } = req.params;
     const { name, abilities, ...rest } = req.body;
 
-    if (!name) return res.send(400, { error: "Name is required" });
+    if (!name) sendErrorResponse(res, errorMessages.nameRequired);
 
     if (Object.keys(rest).length > 0) {
-      return res.send(400, { error: "Invalid properties in req.body" });
+      return sendErrorResponse(res, errorMessages.invalidProperties);
     }
 
     const isValidationSuccess = validateAbilities(abilities, res);
@@ -110,11 +110,12 @@ module.exports = {
         .update({ name, abilities })
         .eq("id", id);
 
-      if (error) return res.send(500, { error: "Internal Server Error" });
+      if (error)
+        return sendErrorResponse(res, errorMessages.internalServerError);
 
       res.send(200, { abilities, name });
     } catch (error) {
-      res.send(500, { error: "Internal Server Error" });
+      sendErrorResponse(res, errorMessages.internalServerError);
     }
   },
 };

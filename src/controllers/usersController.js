@@ -3,29 +3,29 @@ const bcrypt = require("bcrypt");
 const supabase = require("../connection/db");
 const env = require("../config/config");
 
+const sendErrorResponse = require("../utils/sendErrorResponse");
+const errorMessages = require("../utils/errorMessages");
+
 module.exports = {
   async login(req, res) {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.send(400, { error: "Email and password are required" });
+      return sendErrorResponse(errorMessages.userInfoRequired);
     }
 
     try {
-      const { data: users, error } = await supabase
+      let { data: users, error } = await supabase
         .from("users")
         .select("*")
         .eq("email", email);
 
-      if (error) {
-        console.log(error);
-        return res.send(500, { error: "Internal Server Error" });
-      }
+      if (error)
+        return sendErrorResponse(res, errorMessages.internalServerError);
 
       const user = users && users.length > 0 ? users[0] : null;
 
       if (!user || !bcrypt.compareSync(password, user.password)) {
-        return res.send(400, { error: "Invalid credentials" });
       }
 
       const accessToken = jwt.sign(
@@ -36,8 +36,7 @@ module.exports = {
 
       res.send(200, { accessToken });
     } catch (error) {
-      console.error(error);
-      res.send(500, { error: "Internal Server Error" });
+      sendErrorResponse(res, errorMessages.internalServerError);
     }
   },
 
@@ -45,7 +44,7 @@ module.exports = {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      return res.send(400, { error: "Name, email, and password are required" });
+      return sendErrorResponse(res, errorMessages.allUserInfoRequired);
     }
 
     const hashedPassword = bcrypt.hashSync(password, 10);
@@ -57,11 +56,11 @@ module.exports = {
         .eq("email", email);
 
       if (existingUsersError) {
-        return res.send(500, { error: "Internal Server Error" });
+        return sendErrorResponse(res, errorMessages.internalServerError);
       }
 
       if (existingUsers.length > 0) {
-        return res.send(400, { error: "This email is already in use" });
+        return sendErrorResponse(res, errorMessages.emailAlreadyExists);
       }
 
       const { error } = await supabase.from("users").insert([
@@ -73,7 +72,7 @@ module.exports = {
       ]);
 
       if (error) {
-        return res.send(500, { error: "Internal Server Error" });
+        return sendErrorResponse(res, errorMessages.internalServerError);
       }
 
       const { data: newUser } = await supabase
@@ -89,8 +88,7 @@ module.exports = {
 
       res.send(200, { accessToken });
     } catch (error) {
-      console.error(error);
-      res.send(500, { error: "Internal Server Error" });
+      sendErrorResponse(res, errorMessages.internalServerError);
     }
   },
 };
