@@ -14,6 +14,4 @@ const env = new Env(
   process.env.JWT_SECRET_KEY
 );
 
-console.log(env.apiKeyUrl);
-
 module.exports = env;

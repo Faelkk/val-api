@@ -1,66 +1,66 @@
-const abilitiesVideoController = require("../controllers/abilitiesVideoController");
-const homeController = require("../controllers/homeController");
-const signController = require("../controllers/signController");
+const AbilitiesController = require("../controllers/abilitiesController");
+const HomeController = require("../controllers/homeController");
+const UsersController = require("../controllers/usersController");
 
 module.exports = [
   {
     endpoint: "/signin",
     method: "POST",
-    handler: signController.login,
+    handler: UsersController.login,
   },
   {
     endpoint: "/signup",
     method: "POST",
-    handler: signController.register,
+    handler: UsersController.register,
   },
   {
     endpoint: "/home",
     method: "GET",
-    handler: homeController.getHomeDetails,
+    handler: HomeController.getHomeDetails,
   },
   {
     endpoint: "/home/:id",
     method: "GET",
-    handler: homeController.getHomeById,
+    handler: HomeController.getHomeById,
   },
   {
     endpoint: "/home",
     method: "POST",
-    handler: homeController.createHomeDetails,
+    handler: HomeController.createHomeDetails,
   },
   {
     endpoint: "/home/:id",
     method: "DELETE",
-    handler: homeController.deleteHomeDetails,
+    handler: HomeController.deleteHomeDetails,
   },
   {
     endpoint: "/home/:id",
     method: "PUT",
-    handler: homeController.updateHomeDetails,
+    handler: HomeController.updateHomeDetails,
   },
   {
     endpoint: "/abilities",
     method: "GET",
-    handler: abilitiesVideoController.listAbilities,
+    handler: HomeController.listAbilities,
   },
   {
     endpoint: "/abilities/:id",
     method: "GET",
-    handler: abilitiesVideoController.getAbilityById,
+    handler: AbilitiesController.getAbilityById,
   },
   {
     endpoint: "/abilities",
     method: "POST",
-    handler: abilitiesVideoController.createAbilities,
+    handler: AbilitiesController.createAbilities,
   },
   {
     endpoint: "/abilities/:id",
     method: "PUT",
-    handler: abilitiesVideoController.updateAbilities,
+    handler: AbilitiesController.updateAbilities,
   },
   {
     endpoint: "/abilities/:id",
     method: "DELETE",
-    handler: abilitiesVideoController.deleteAbility,
+    handler: AbilitiesController.deleteAbility,
   },
 ];

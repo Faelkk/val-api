@@ -1,5 +1,5 @@
 const supabase = require("../connection/db");
-const validateHomeDetails = require("../helpers/validateHomeDetails");
+const validateHome = require("../helpers/validateHome");
 
 module.exports = {
   async getHomeDetails(req, res) {
@@ -43,7 +43,7 @@ module.exports = {
 
     const { urlTrailerHome, episode, act } = req.body;
 
-    const isValidationSuccess = validateHomeDetails(req.body, res);
+    const isValidationSuccess = validateHome(req.body, res);
 
     if (!isValidationSuccess || !videoBgHomePath) return;
 
@@ -95,7 +95,7 @@ module.exports = {
 
     const { urlTrailerHome, episode, act } = req.body;
 
-    const isValidationSuccess = validateHomeDetails(req.body, res);
+    const isValidationSuccess = validateHome(req.body, res);
 
     if (!isValidationSuccess || !videoBgHomePath) return;
 
