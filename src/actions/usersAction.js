@@ -39,7 +39,7 @@ async function registerUser(name, email, password) {
       .select("email")
       .eq("email", email);
 
-    if (existingUsersError) throw existingUsersError;
+    if (existingUsersError) existingUsersError;
 
     if (existingUsers.length > 0) {
       throw new Error("Email already exists");

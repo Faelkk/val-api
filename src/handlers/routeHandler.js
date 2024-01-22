@@ -15,7 +15,9 @@ const handleRoute = (req, res, route) => {
       req.headers["content-type"] &&
       req.headers["content-type"].startsWith("multipart/form-data")
     ) {
-      uploadMiddleware.single("videoBackGroundHome")(req, res, (err) => {
+      const uploadHandler = uploadMiddleware("videoBackGroundHome");
+
+      uploadHandler(req, res, (err) => {
         if (err) {
           sendJsonResponse(res, 500, {
             error: true,
@@ -25,6 +27,7 @@ const handleRoute = (req, res, route) => {
           route.handler(req, res);
         }
       });
+
       return;
     }
   }

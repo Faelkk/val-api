@@ -37,12 +37,13 @@ module.exports = {
   },
 
   async createHomeDetails(req, res) {
-    const videoBgHomePath = req.file.path;
+    const videoBgHomePath = req.fileUrl;
     const { urlTrailerHome, episode, act } = req.body;
 
     const isValidationSuccess = validateHome(req.body, res);
 
-    if (!isValidationSuccess || !videoBgHomePath) return;
+    if (!isValidationSuccess || !videoBgHomePath)
+      sendErrorResponse(res, errorMessages.internalServerError);
 
     try {
       const { error } = await homeActions.createHomeDetails(videoBgHomePath, {
@@ -77,7 +78,7 @@ module.exports = {
 
   async updateHomeDetails(req, res) {
     let { id } = req.params;
-    const videoBgHomePath = req.file.path;
+    const videoBgHomePath = req.fileUrl;
     const { urlTrailerHome, episode, act } = req.body;
 
     const isValidationSuccess = validateHome(req.body, res);

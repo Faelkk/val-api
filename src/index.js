@@ -7,7 +7,6 @@ require("dotenv").config();
 
 const server = http.createServer((req, res) => {
   const parsedUrl = new URL(`http://localhost:5000${req.url}`);
-
   let { pathname } = parsedUrl;
   let id = null;
 
