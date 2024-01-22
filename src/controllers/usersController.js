@@ -1,8 +1,4 @@
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const supabase = require("../connection/db");
-const env = require("../config/config");
-
+const userActions = require("./userActions");
 const sendErrorResponse = require("../utils/sendErrorResponse");
 const errorMessages = require("../utils/errorMessages");
 
@@ -15,25 +11,7 @@ module.exports = {
     }
 
     try {
-      let { data: users, error } = await supabase
-        .from("users")
-        .select("*")
-        .eq("email", email);
-
-      if (error)
-        return sendErrorResponse(res, errorMessages.internalServerError);
-
-      const user = users && users.length > 0 ? users[0] : null;
-
-      if (!user || !bcrypt.compareSync(password, user.password)) {
-      }
-
-      const accessToken = jwt.sign(
-        { userId: user.id, email: user.email },
-        env.jwtSecret,
-        { expiresIn: "7d" }
-      );
-
+      const { accessToken } = await userActions.loginUser(email, password);
       res.send(200, { accessToken });
     } catch (error) {
       sendErrorResponse(res, errorMessages.internalServerError);
@@ -47,45 +25,12 @@ module.exports = {
       return sendErrorResponse(res, errorMessages.allUserInfoRequired);
     }
 
-    const hashedPassword = bcrypt.hashSync(password, 10);
-
     try {
-      const { data: existingUsers, error: existingUsersError } = await supabase
-        .from("users")
-        .select("email")
-        .eq("email", email);
-
-      if (existingUsersError) {
-        return sendErrorResponse(res, errorMessages.internalServerError);
-      }
-
-      if (existingUsers.length > 0) {
-        return sendErrorResponse(res, errorMessages.emailAlreadyExists);
-      }
-
-      const { error } = await supabase.from("users").insert([
-        {
-          name,
-          email,
-          password: hashedPassword,
-        },
-      ]);
-
-      if (error) {
-        return sendErrorResponse(res, errorMessages.internalServerError);
-      }
-
-      const { data: newUser } = await supabase
-        .from("users")
-        .select("*")
-        .eq("email", email);
-
-      const accessToken = jwt.sign(
-        { userId: newUser[0].id, email: newUser[0].email },
-        env.jwtSecret,
-        { expiresIn: "7d" }
+      const { accessToken } = await userActions.registerUser(
+        name,
+        email,
+        password
       );
-
       res.send(200, { accessToken });
     } catch (error) {
       sendErrorResponse(res, errorMessages.internalServerError);
