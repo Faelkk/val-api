@@ -24,7 +24,7 @@ module.exports = {
       const accessToken = jwt.sign(
         { userId: user.id, email: user.email },
         env.jwtSecret,
-        { expiresIn: "7d" }
+        { expiresIn: null }
       );
 
       return { accessToken };
@@ -68,7 +68,7 @@ module.exports = {
       const accessToken = jwt.sign(
         { userId: newUser[0].id, email: newUser[0].email },
         env.jwtSecret,
-        { expiresIn: "7d" }
+        { expiresIn: null }
       );
 
       return { accessToken };

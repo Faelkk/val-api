@@ -49,16 +49,8 @@ async function deleteHomeDetails(id) {
       .select("video_background_home")
       .eq("id", id);
 
-    if (homeError) {
+    if (!homeError) {
       throw homeError;
-    }
-
-    const videoBgHomePath =
-      homeData && homeData.length > 0
-        ? homeData[0].video_background_home
-        : null;
-    if (videoBgHomePath) {
-      fs.unlinkSync(videoBgHomePath);
     }
 
     const { error } = await supabase.from("home_details").delete().eq("id", id);
