@@ -11,7 +11,7 @@ module.exports = {
     }
 
     try {
-      const { accessToken } = await userActions.loginUser(email, password);
+      const { accessToken } = await userActions.loginUser(res, email, password);
       res.send(200, { accessToken });
     } catch (error) {
       sendErrorResponse(res, errorMessages.internalServerError);
@@ -27,6 +27,7 @@ module.exports = {
 
     try {
       const { accessToken } = await userActions.registerUser(
+        res,
         name,
         email,
         password

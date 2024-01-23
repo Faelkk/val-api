@@ -57,18 +57,8 @@ async function deleteHomeDetails(id) {
       homeData && homeData.length > 0
         ? homeData[0].video_background_home
         : null;
-
-    console.log(homeData);
-    console.log(videoBgHomePath);
-
     if (videoBgHomePath) {
-      const { error: storageError } = await supabase.storage
-        .from("valWiki")
-        .remove([videoBgHomePath]);
-
-      if (storageError) {
-        throw storageError;
-      }
+      fs.unlinkSync(videoBgHomePath);
     }
 
     const { error } = await supabase.from("home_details").delete().eq("id", id);
@@ -77,6 +67,7 @@ async function deleteHomeDetails(id) {
     throw error;
   }
 }
+
 async function updateHomeDetails(
   id,
   videoBgHomePath,

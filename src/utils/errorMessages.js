@@ -9,6 +9,10 @@ const errorMessages = {
     statusCode: 400,
     message: "Invalid properties in req.body",
   },
+  invalidCredentials: {
+    statusCode: 400,
+    message: "invalid user credentials",
+  },
   emailAlreadyExists: {
     statusCode: 400,
     message: "This email is already in use",
