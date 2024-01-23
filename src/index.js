@@ -13,6 +13,12 @@ const server = http.createServer((req, res) => {
   );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
+  if (req.method === "OPTIONS") {
+    res.writeHead(200);
+    res.end();
+    return;
+  }
+
   const parsedUrl = new URL(`http://localhost:5000${req.url}`);
   let { pathname } = parsedUrl;
   let id = null;
