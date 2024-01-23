@@ -24,7 +24,7 @@ module.exports = {
       const accessToken = jwt.sign(
         { userId: user.id, email: user.email },
         env.jwtSecret,
-        { expiresIn: null }
+        { expiresIn: "1000d" }
       );
 
       return { accessToken };
@@ -41,8 +41,6 @@ module.exports = {
         .from("users")
         .select("email")
         .eq("email", email);
-
-      console.log(existingUsers);
 
       if (existingUsers.length > 0) {
         console.log(existingUsers);
@@ -68,7 +66,7 @@ module.exports = {
       const accessToken = jwt.sign(
         { userId: newUser[0].id, email: newUser[0].email },
         env.jwtSecret,
-        { expiresIn: null }
+        { expiresIn: "1000d" }
       );
 
       return { accessToken };
