@@ -6,6 +6,13 @@ const authMiddleware = require("./middlewares/authMiddleware");
 require("dotenv").config();
 
 const server = http.createServer((req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "OPTIONS, GET, POST, PUT, DELETE"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
   const parsedUrl = new URL(`http://localhost:5000${req.url}`);
   let { pathname } = parsedUrl;
   let id = null;
