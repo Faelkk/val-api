@@ -41,7 +41,7 @@ module.exports = [
   {
     endpoint: "/abilities",
     method: "GET",
-    handler: HomeController.listAbilities,
+    handler: AbilitiesController.listAbilities,
   },
   {
     endpoint: "/abilities/:id",

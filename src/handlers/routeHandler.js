@@ -31,7 +31,7 @@ const handleRoute = (req, res, route) => {
       return;
     }
   }
-
+  console.log(route);
   bodyParserMiddleware(req, res, () => route.handler(req, res));
 };
 
